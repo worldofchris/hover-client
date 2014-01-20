@@ -17,7 +17,7 @@ curl "https://www.hover.com/api/dns/${DNS_ID}" \
      -X PUT            \
      -d "content=${IP}" \
      -s                \
-     -b <(curl "https://www.hover.com/signin" \
+     -b <(curl "https://www.hover.com/api/login" \
                -X POST                   \
                -G                        \
                -d "username=${USERNAME}" \
