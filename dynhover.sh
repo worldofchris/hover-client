@@ -11,7 +11,7 @@ DNS_ID=${3}
 # (replace "yourdomain.com" with your actual domain, and look for the record
 # you want to change. The ID looks like: dns1234567)
 
-IP=$(curl "http://api.exip.org/?call=ip" -s)
+IP=$(curl "http://ifconfig.me/ip" -s)
 
 curl "https://www.hover.com/api/dns/${DNS_ID}" \
      -X PUT            \

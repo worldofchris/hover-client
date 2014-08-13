@@ -45,7 +45,7 @@ class HoverAPI(object):
 
 
 def get_public_ip():
-    return requests.get("http://api.exip.org/?call=ip").content
+    return requests.get("http://ifconfig.me/ip").content
 
 
 def update_dns(username, password, fqdn):
