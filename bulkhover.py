@@ -28,10 +28,14 @@ Examples:
   @ MX 10 example.com
 
   
-  Since the script output is in the same format as its input, you can copy the
-  entire contents of one domain to another, like so:
+  Since the script output is in the same format as its input, you can use shell
+  pipelines to do complex operations.
 
-  bulkhover.py -c my.conf export example.com - | ./bulkhover.py -c my.conf -f import other.com -
+  Copy all DNS records from one domain to another:
+    bulkhover.py -c my.conf export example.com - | ./bulkhover.py -c my.conf -f import other.com -
+
+  Copy only MX records from one domain to another:
+    ./bulkhover.py -c my.conf export foo.com - | awk '$2 == "MX" {print $0}' | ./bulkhover.py -c my.conf import bar.com -
 
 
   To avoid passing your username and password in the command-line, you can use
