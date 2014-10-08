@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 """
-dynhover.py 1.1
+dynhover.py 1.2
+
+This tool will update an A record for given (sub)domain in your hover.com
+with your IP, or an IP that you specify
 
 Usage:
   dynhover.py (-c <conf> | -u <user> -p <password>) <domain>
@@ -8,11 +11,12 @@ Usage:
   dynhover.py --version
 
 Options:
-  -h --help             Show this screen.
-  --version             Show version.
-  -c --conf=<conf>      Path to conf.
-  -u --username=<user>  Your hover username.
-  -p --password=<pass>  Your hover password.
+  -h --help             Show this screen
+  --version             Show version
+  -c --conf=<conf>      Path to conf
+  -u --username=<user>  Your hover username
+  -p --password=<pass>  Your hover password
+  -i --ip=<ip>          An IP to set (auto-detected by default)
 """
 
 import ConfigParser
@@ -48,7 +52,7 @@ def get_public_ip():
     return requests.get("http://ifconfig.me/ip").content
 
 
-def update_dns(username, password, fqdn):
+def update_dns(username, password, fqdn, ip):
     try:
         client = HoverAPI(username, password)
     except HoverException as e:
@@ -66,8 +70,6 @@ def update_dns(username, password, fqdn):
     if dns_id is None:
         raise HoverException("No DNS record found for {0}".format(fqdn))
 
-    my_ip = get_public_ip()
-
     response = client.call("put", "dns/{0}".format(dns_id), {"content": my_ip})
     
     if "succeeded" not in response or response["succeeded"] is not True:
@@ -84,9 +86,10 @@ def main(args):
         username, password = items["username"], items["password"]
 
     domain = args["<domain>"]
+    ip = args["--ip"] or get_public_ip()
     
     try:
-        update_dns(username, password, domain)
+        update_dns(username, password, domain, ip)
     except HoverException as e:
         print "Unable to update DNS: {0}".format(e)
         return 1
