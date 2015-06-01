@@ -6,7 +6,6 @@ Wraper for hover API based on https://gist.github.com/dankrause/5585907
 """
 
 import requests
-import sys
 
 
 class HoverException(Exception):
@@ -20,7 +19,7 @@ class HoverClient(object):
         r = requests.post("https://www.hover.com/api/login", params=params)
 
         if not r.ok or "hoverauth" not in r.cookies:
-            raise HoverException(r)
+            raise HoverException("{0}:{1}".format(r.status_code, r.json()["error"]))
         self.cookies = {"hoverauth": r.cookies["hoverauth"]}
 
         dns = self.call("get", "dns")
@@ -42,7 +41,7 @@ class HoverClient(object):
         r = requests.request(method, url, data=data, cookies=self.cookies)
 
         if not r.ok:
-            raise HoverException(r)
+            raise HoverException("{0}:{1}".format(r.status_code, r.json()["error"]))
         if r.content:
             body = r.json()
             if "succeeded" not in body or body["succeeded"] is not True:

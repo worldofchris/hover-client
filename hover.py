@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-from hover.client import HoverClient
+from hover.client import HoverClient, HoverException
 
 
 def main():
@@ -38,31 +38,34 @@ def main():
     params = module.params
     changed = False
 
-    hc = HoverClient(username=params['username'],
-                     password=params['password'],
-                     domain_name=params['domain'])
+    try:
+        hc = HoverClient(username=params['username'],
+                         password=params['password'],
+                         domain_name=params['domain'])
 
-    record = hc.get_record(name=params['name'], type=params['type'])
+        record = hc.get_record(name=params['name'], type=params['type'])
 
-    if params['state'] == 'present':
+        if params['state'] == 'present':
 
-        if record is None:
-            hc.add_record(name=params['name'],
-                          type=params['type'],
-                          content=params['value'])
-            changed = True
-        else:
-
-            if record['content'] != params['value']:
-                hc.update_record(name=params['name'],
-                                 type=params['type'],
-                                 content=params['value'])
+            if record is None:
+                hc.add_record(name=params['name'],
+                              type=params['type'],
+                              content=params['value'])
                 changed = True
-    else:
-        if record is not None:
-            hc.remove_record(name=params['name'],
-                             type=params['type'])
-            changed = True
+            else:
+
+                if record['content'] != params['value']:
+                    hc.update_record(name=params['name'],
+                                     type=params['type'],
+                                     content=params['value'])
+                    changed = True
+        else:
+            if record is not None:
+                hc.remove_record(name=params['name'],
+                                 type=params['type'])
+                changed = True
+    except HoverException as e:
+        module.fail_json(msg=str(e))
 
     module.exit_json(changed=changed)
 
