@@ -1,9 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-
-from hover.client import HoverClient, HoverException
-
+try:
+    from hover.client import HoverClient, HoverException
+    HAS_LIB=True
+except:
+    HAS_LIB=False
 
 def main():
 
@@ -34,6 +36,9 @@ def main():
         add_file_common_args=True,
         supports_check_mode=False
     )
+
+    if not HAS_LIB:
+        module.fail_json(msg="Requires hover module")
 
     params = module.params
     changed = False
