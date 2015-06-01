@@ -53,6 +53,48 @@ class TestHover(unittest.TestCase):
                                             content="crazyland.aws.com")
             self.assertEqual(actual, expected)
 
+    def testGetRecord(self):
+        """
+        Get a record so we can check if it exists and has the
+        expected value
+        """
+        with patch('requests.request') as patched_request:
+            type(patched_request.return_value).json = Mock(
+                side_effect=[{"succeeded": True,
+                              "domains": [{"entries": [{"type": "CNAME",
+                                                        "name": "megatron",
+                                                        "content": "crazyland.aws.com",
+                                                        "id":   "dns1234"}]}
+                                          ]}])
+            expected = {"name": "megatron",
+                        "type": "CNAME",
+                        "content": "crazyland.aws.com",
+                        "id": "dns1234"}
+
+            actual = self.client.get_record(type="CNAME",
+                                            name="megatron")
+            self.assertEqual(actual, expected)
+
+    def testUpdateCname(self):
+        """
+        Update content for an existing record
+        """
+        with patch('requests.request') as patched_request:
+            type(patched_request.return_value).json = Mock(
+                side_effect=[{"succeeded": True,
+                              "domains": [{"entries": [{"type": "CNAME",
+                                                        "name": "megatron",
+                                                        "content": "blah",
+                                                        "id":   "dns1234"}]}
+                                          ]},
+                             {"succeeded": True}])
+
+            expected = {"succeeded": True}
+            actual = self.client.update_record(type="CNAME",
+                                               name="megatron",
+                                               content="foo.aws.com")
+            self.assertEqual(actual, expected)
+
     def testRemoveCname(self):
         """
         Remove a CNAME
@@ -62,6 +104,7 @@ class TestHover(unittest.TestCase):
                 side_effect=[{"succeeded": True,
                               "domains": [{"entries": [{"type": "CNAME",
                                                         "name": "megatron",
+                                                        "content": "blah",
                                                         "id":   "dns1234"}]}
                                           ]},
                              {"succeeded": True}])

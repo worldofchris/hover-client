@@ -53,12 +53,35 @@ class HoverClient(object):
         record = {"name": name, "type": type, "content": content}
         return self.call("post", "domains/{0}/dns".format(self.dns_id), record)
 
-    def remove_record(self, type, name):
+    def get_record(self, type, name):
 
         records = self.call("get", "domains/{0}/dns".format(self.dns_id))["domains"][0]["entries"]
 
         for record in records:
             if record["type"] == type and record["name"] == name:
-                return self.call("delete", "dns/{0}".format(record["id"]))
+                return {"name": record["name"],
+                        "type": record["type"],
+                        "content": record["content"],
+                        "id": record["id"]}
 
-        raise HoverException("Record not found")
+        return None
+
+    def update_record(self, type, name, content):
+
+        record = self.get_record(type, name)
+
+        if record is not None:
+            return self.call("put",
+                             "dns/{0}".format(record["id"]),
+                             {"content": content})
+        else:
+            raise HoverException("Record not found")
+
+    def remove_record(self, type, name):
+
+        record = self.get_record(type, name)
+
+        if record is not None:
+            return self.call("delete", "dns/{0}".format(record["id"]))
+        else:
+            raise HoverException("Record not found")

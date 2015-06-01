@@ -1,0 +1,17 @@
+---
+- name: Example playbook for hover client module
+  hosts: localhost
+  gather_facts: false
+  sudo: no
+
+  tasks:
+    - name: Ensure an A record is present
+      hover:
+        username: username
+        password: password
+        domain: worldofchris.com
+        state: present
+        type: A
+        name: "test"
+        value: "192.168.1.2"
+
