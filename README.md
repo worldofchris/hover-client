@@ -1,5 +1,7 @@
 # hover-client
 
+[![Build Status](https://travis-ci.org/worldofchris/hover-client.png)](https://travis-ci.org/worldofchris/hover-client)
+
 Python client for the undocumented, unofficial [Hover.com](http://hover.com)  API.
 
 Based on Dan Krause's excellent [gist](https://gist.github.com/dankrause/5585907).
