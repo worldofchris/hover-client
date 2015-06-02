@@ -21,7 +21,7 @@ Remove an existing DNS record with:
 
     hc.remove_record(type, name)
 
-## Running the tests
+## Tests
 
 Run the tests with nose:
 
